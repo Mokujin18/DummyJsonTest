@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AuthGuard } from "../components/Auth/AuthGuard";
-import { Header } from "../components/Layout/Header";
+
 import { fetchProductById } from "../api/products";
 import type { Product } from "../types";
 import { ProductGallery } from "../components/Products/ProductGallery";
 import { ProductInfo } from "../components/Products/ProductInfo";
 import { ProductSpecs } from "../components/Products/ProductSpecs";
 import { ProductAdditionalInfo } from "../components/Products/ProductAdditionalInfo";
+import { BackButton } from "../components/Products/BackButton";
 
 export const ProductPage = () => {
   const { id } = useParams();
@@ -34,6 +35,8 @@ export const ProductPage = () => {
     loadProduct();
   }, [id]);
 
+  console.log(product);
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -43,42 +46,14 @@ export const ProductPage = () => {
       );
     }
 
-    if (error) {
-      return (
-        <div className="text-center py-12">
-          <div className="text-red-500 mb-4">{error}</div>
-          <button
-            onClick={() => window.history.back()}
-            className="text-blue-500 hover:text-blue-700"
-          >
-            ← Back
-          </button>
-        </div>
-      );
-    }
-
-    if (!product) {
-      return (
-        <div className="text-center py-12">
-          <div className="text-gray-500 mb-4">Product not found</div>
-          <button
-            onClick={() => window.history.back()}
-            className="text-blue-500 hover:text-blue-700"
-          >
-            ← Back
-          </button>
-        </div>
-      );
+    if (error || !product) {
+      return <BackButton error={error || "Product not found"} />;
     }
 
     return (
       <div className="bg-white rounded-xl shadow-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <ProductGallery
-            images={product.images}
-            thumbnail={product.thumbnail}
-            title={product.title}
-          />
+          <ProductGallery images={product.images} title={product.title} />
 
           <div className="space-y-6">
             <ProductInfo
@@ -112,7 +87,6 @@ export const ProductPage = () => {
   return (
     <AuthGuard>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-        <Header />
         <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           {renderContent()}
         </main>

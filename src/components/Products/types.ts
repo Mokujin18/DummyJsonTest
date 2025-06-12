@@ -1,6 +1,7 @@
+import type { Product } from "../../types";
+
 export interface ProductGalleryProps {
   images: string[];
-  thumbnail: string;
   title: string;
 }
 
@@ -14,5 +15,28 @@ export interface ErrorMessageProps {
 }
 
 export interface PaginationProps {
+  className?: string;
+}
+
+export interface SearchBarProps {
+  placeholder?: string;
+  className?: string;
+}
+
+export interface ProductSpecsProps {
+  category: string;
+  rating: number;
+  stock: number;
+  sku: string;
+}
+
+export interface ProductAdditionalInfoProps {
+  warrantyInformation: string;
+  shippingInformation: string;
+  returnPolicy: string;
+}
+
+export interface ProductCardProps {
+  product: Product;
   className?: string;
 }

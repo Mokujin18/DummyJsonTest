@@ -9,27 +9,34 @@ import { ProductsPage } from "./pages/ProductsPage";
 import { ProductPage } from "./pages/ProductPage";
 import { useAuthStore } from "./stores/authStore";
 import "./App.css";
-
+import { URL } from "./constants/url";
+import { Header } from "./components/Layout/Header";
 function App() {
   const { isAuthenticated } = useAuthStore();
-
   return (
     <Router>
+      <Header />
       <div className="App">
         <Routes>
-          <Route path="/login" element={<AuthPage />} />
-          <Route path="/products" element={<ProductsPage />} />
-          <Route path="/products/:id" element={<ProductPage />} />
+          <Route path={URL.LOGIN} element={<AuthPage />} />
+          <Route path={URL.PRODUCTS} element={<ProductsPage />} />
+          <Route path={URL.PRODUCT} element={<ProductPage />} />
           <Route
-            path="/"
+            path={URL.ROOT}
             element={
-              <Navigate to={isAuthenticated ? "/products" : "/login"} replace />
+              <Navigate
+                to={isAuthenticated ? URL.PRODUCTS : URL.LOGIN}
+                replace
+              />
             }
           />
           <Route
             path="*"
             element={
-              <Navigate to={isAuthenticated ? "/products" : "/login"} replace />
+              <Navigate
+                to={isAuthenticated ? URL.PRODUCTS : URL.LOGIN}
+                replace
+              />
             }
           />
         </Routes>

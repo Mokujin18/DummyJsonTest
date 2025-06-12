@@ -3,7 +3,8 @@ import { useAuthStore } from "../../stores/authStore";
 import { FaXmark } from "react-icons/fa6";
 import { FaSignInAlt } from "react-icons/fa";
 import { Button } from "../UI/Button";
-
+import { useNavigate } from "react-router-dom";
+import { URL } from "../../constants/url";
 interface AuthGuardProps {
   children: ReactNode;
   fallback?: ReactNode;
@@ -11,21 +12,18 @@ interface AuthGuardProps {
 
 export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
   const { isAuthenticated } = useAuthStore();
-
+  const navigate = useNavigate();
   if (!isAuthenticated) {
     return (
       fallback || (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 py-12 px-4 sm:px-6 lg:px-8">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-1/4 -right-32 w-64 h-64 rounded-full bg-gradient-to-br from-red-400 to-orange-600 opacity-20 animate-pulse"></div>
-            <div
-              className="absolute bottom-1/4 -left-32 w-64 h-64 rounded-full bg-gradient-to-br from-orange-400 to-yellow-600 opacity-20 animate-pulse"
-              style={{ animationDelay: "2s" }}
-            ></div>
+            <div className="absolute bottom-1/4 -left-32 w-64 h-64 rounded-full bg-gradient-to-br from-orange-400 to-yellow-600 opacity-20 animate-pulse"></div>
           </div>
 
           <div className="relative max-w-md w-full space-y-8 text-center">
-            <div className="mx-auto h-24 w-24 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl animate-bounce">
+            <div className="mx-auto h-24 w-24 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center shadow-2xl ">
               <FaXmark className="h-12 w-12 text-white" />
             </div>
 
@@ -55,7 +53,7 @@ export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
                 </div>
 
                 <Button
-                  onClick={() => (window.location.href = "/login")}
+                  onClick={() => navigate(URL.LOGIN)}
                   className="w-full flex justify-center items-center py-3 px-6 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <FaSignInAlt className="h-5 w-5 mr-2" />

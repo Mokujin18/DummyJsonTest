@@ -130,6 +130,7 @@ export interface ProductState {
   filterByCategory: (category: string) => Promise<void>;
   setFilters: (filters: Partial<ProductFilters>) => void;
   clearFilters: () => void;
+  clearSearch: () => void;
   setPage: (page: number) => Promise<void>;
   clearError: () => void;
 }

@@ -3,6 +3,9 @@ import { useProductStore } from "../../stores/productStore";
 import { handlePageChange } from "../../utils/pagination";
 import { getVisiblePages } from "../../utils/pagination";
 import type { PaginationProps } from "./types";
+import { IconButton } from "../UI/IconButton";
+import { Button } from "../UI/Button";
+import { twMerge } from "tailwind-merge";
 
 export const Pagination = ({ className = "" }: PaginationProps) => {
   const { total, currentPage, itemsPerPage, setPage, isLoading } =
@@ -17,9 +20,9 @@ export const Pagination = ({ className = "" }: PaginationProps) => {
   const visiblePages = getVisiblePages(currentPage, totalPages);
 
   return (
-    <div className={`flex items-center justify-between ${className}`}>
+    <div className={`flex items-center justify-between ${className} p-6`}>
       <div className="flex-1 flex justify-between sm:hidden">
-        <button
+        <Button
           onClick={() =>
             handlePageChange(
               currentPage - 1,
@@ -30,11 +33,11 @@ export const Pagination = ({ className = "" }: PaginationProps) => {
             )
           }
           disabled={currentPage === 1 || isLoading}
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          variant="secondary"
         >
           Previous
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() =>
             handlePageChange(
               currentPage + 1,
@@ -45,10 +48,11 @@ export const Pagination = ({ className = "" }: PaginationProps) => {
             )
           }
           disabled={currentPage === totalPages || isLoading}
-          className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          variant="secondary"
+          className="ml-3"
         >
           Next
-        </button>
+        </Button>
       </div>
 
       <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
@@ -68,7 +72,7 @@ export const Pagination = ({ className = "" }: PaginationProps) => {
 
         <div>
           <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-            <button
+            <IconButton
               onClick={() =>
                 handlePageChange(
                   currentPage - 1,
@@ -79,11 +83,12 @@ export const Pagination = ({ className = "" }: PaginationProps) => {
                 )
               }
               disabled={currentPage === 1 || isLoading}
-              className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-            >
-              <span className="sr-only">Previous</span>
-              <FaArrowLeft />
-            </button>
+              variant="outline"
+              icon={<FaArrowLeft />}
+              rounded="md"
+              className="rounded-l-md rounded-r-none"
+              title="Previous page"
+            />
 
             {visiblePages.map((page, index) => {
               if (page === "...") {
@@ -101,7 +106,7 @@ export const Pagination = ({ className = "" }: PaginationProps) => {
               const isCurrentPage = pageNumber === currentPage;
 
               return (
-                <button
+                <Button
                   key={pageNumber}
                   onClick={() =>
                     handlePageChange(
@@ -113,22 +118,22 @@ export const Pagination = ({ className = "" }: PaginationProps) => {
                     )
                   }
                   disabled={isLoading}
-                  className={`
-                    relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-colors duration-200
-                    ${
-                      isCurrentPage
-                        ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
-                        : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-                    }
-                    ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
-                  `}
+                  className={twMerge(`
+                      relative rounded-none inline-flex items-center px-4 py-2 border text-sm font-medium transition-colors duration-200
+                      ${
+                        isCurrentPage
+                          ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
+                          : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
+                      }
+                      ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
+                    `)}
                 >
                   {pageNumber}
-                </button>
+                </Button>
               );
             })}
 
-            <button
+            <IconButton
               onClick={() =>
                 handlePageChange(
                   currentPage + 1,
@@ -139,11 +144,12 @@ export const Pagination = ({ className = "" }: PaginationProps) => {
                 )
               }
               disabled={currentPage === totalPages || isLoading}
-              className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-            >
-              <span className="sr-only">Next</span>
-              <FaArrowRight />
-            </button>
+              variant="outline"
+              icon={<FaArrowRight />}
+              rounded="md"
+              className="rounded-r-md rounded-l-none"
+              title="Next page"
+            />
           </nav>
         </div>
       </div>

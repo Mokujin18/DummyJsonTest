@@ -1,47 +1,107 @@
-import { type AlertProps } from "./types";
+import {
+  FaXmark,
+  FaCircleCheck,
+  FaTriangleExclamation,
+  FaCircleInfo,
+} from "react-icons/fa6";
+import { twMerge } from "tailwind-merge";
+
+interface AlertProps {
+  variant?: "error" | "success" | "warning" | "info";
+  title?: string;
+  children: React.ReactNode;
+  onClose?: () => void;
+  className?: string;
+  showIcon?: boolean;
+  action?: React.ReactNode;
+}
+
+const variants = {
+  error: {
+    icon: FaXmark,
+    containerClass: "bg-red-50 border-red-200",
+    iconClass: "text-red-600",
+    titleClass: "text-red-800",
+    textClass: "text-red-700",
+  },
+  success: {
+    icon: FaCircleCheck,
+    containerClass: "bg-green-50 border-green-200",
+    iconClass: "text-green-600",
+    titleClass: "text-green-800",
+    textClass: "text-green-700",
+  },
+  warning: {
+    icon: FaTriangleExclamation,
+    containerClass: "bg-yellow-50 border-yellow-200",
+    iconClass: "text-yellow-600",
+    titleClass: "text-yellow-800",
+    textClass: "text-yellow-700",
+  },
+  info: {
+    icon: FaCircleInfo,
+    containerClass: "bg-blue-50 border-blue-200",
+    iconClass: "text-blue-600",
+    titleClass: "text-blue-800",
+    textClass: "text-blue-700",
+  },
+};
 
 export const Alert = ({
   variant = "info",
-  icon,
   title,
   children,
+  onClose,
   className = "",
+  showIcon = true,
+  action,
 }: AlertProps) => {
-  const baseClasses = "p-4 rounded-2xl border";
-
-  const variantClasses = {
-    info: "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200",
-    error: "bg-gradient-to-r from-red-50 to-pink-50 border-red-200",
-    success: "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200",
-    warning: "bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200",
-  };
-
-  const textClasses = {
-    info: "text-blue-700",
-    error: "text-red-700",
-    success: "text-green-700",
-    warning: "text-yellow-700",
-  };
-
-  const titleClasses = {
-    info: "text-blue-800",
-    error: "text-red-800",
-    success: "text-green-800",
-    warning: "text-yellow-800",
-  };
+  const variantConfig = variants[variant];
+  const Icon = variantConfig.icon;
 
   return (
-    <div className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
+    <div
+      className={twMerge(
+        "border rounded-lg p-4",
+        variantConfig.containerClass,
+        className
+      )}
+    >
       <div className="flex items-start space-x-3">
-        {icon && <div className="flex-shrink-0">{icon}</div>}
-        <div className="flex-1">
+        {showIcon && (
+          <Icon
+            className={twMerge("w-5 h-5 mt-0.5", variantConfig.iconClass)}
+          />
+        )}
+
+        <div className="flex-grow">
           {title && (
-            <h3 className={`text-sm font-medium ${titleClasses[variant]} mb-1`}>
+            <h3
+              className={twMerge(
+                "text-sm font-medium",
+                variantConfig.titleClass
+              )}
+            >
               {title}
             </h3>
           )}
-          <div className={`text-sm ${textClasses[variant]}`}>{children}</div>
+          <div className={twMerge("text-sm mt-1", variantConfig.textClass)}>
+            {children}
+          </div>
+          {action && <div className="mt-3">{action}</div>}
         </div>
+
+        {onClose && (
+          <button
+            onClick={onClose}
+            className={twMerge(
+              "hover:opacity-70 transition-opacity duration-200",
+              variantConfig.iconClass
+            )}
+          >
+            <FaXmark className="w-4 h-4" />
+          </button>
+        )}
       </div>
     </div>
   );

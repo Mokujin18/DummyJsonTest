@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { InputField } from "../UI/Form/InputField";
 import { Button } from "../UI/Button";
-import { ErrorMessage } from "./components/ErrorMessage";
+import { ErrorMessage } from "../common/ErrorMessage";
 import { TestCredentials } from "./components/TestCredentials";
 import { FaLock, FaUser } from "react-icons/fa6";
 import { FaSignInAlt } from "react-icons/fa";
@@ -13,7 +13,7 @@ export const LoginForm = () => {
   const { login, isLoading, error, clearError } = useAuthStore();
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     clearError();
 
     try {
@@ -29,13 +29,9 @@ export const LoginForm = () => {
         <div className="p-8 space-y-8">
           <TestCredentials />
 
-          {error && (
-            <div className="px-2">
-              <ErrorMessage error={error} />
-            </div>
-          )}
+          {error && <ErrorMessage error={error} className="mb-6" />}
 
-          <form className="space-y  -6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-5 ">
               <InputField
                 id="username"

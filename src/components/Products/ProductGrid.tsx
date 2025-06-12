@@ -1,7 +1,7 @@
 import { useProductStore } from "../../stores/productStore";
 import { ProductCard } from "./ProductCard";
 import { LoadingSkeleton } from "./LoadingSkeleton";
-import { ErrorState } from "./ErrorState";
+import { ErrorMessage } from "../common/ErrorMessage";
 
 interface ProductGridProps {
   className?: string;
@@ -11,7 +11,7 @@ export const ProductGrid = ({ className = "" }: ProductGridProps) => {
   const { products, isLoading, error } = useProductStore();
 
   if (error) {
-    return <ErrorState error={error} />;
+    return <ErrorMessage error={error} variant="withRetry" />;
   }
 
   if (isLoading) {

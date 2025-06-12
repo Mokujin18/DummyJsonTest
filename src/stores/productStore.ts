@@ -77,23 +77,48 @@ export const useProductStore = create<ProductState>()(
 
       searchProducts: async (query) => {
         const trimmedQuery = query.trim();
+        const currentFilters = get().filters;
 
         set({
-          filters: { search: trimmedQuery },
+          filters: {
+            ...currentFilters,
+            search: trimmedQuery,
+          },
           currentPage: 1,
         });
 
         await get().fetchProducts({
           search: trimmedQuery,
+          category: currentFilters.category,
+          skip: 0,
+        });
+      },
+
+      clearSearch: () => {
+        const currentFilters = get().filters;
+        const { search, ...otherFilters } = currentFilters;
+
+        set({
+          filters: otherFilters,
+          currentPage: 1,
+        });
+
+        get().fetchProducts({
+          ...otherFilters,
           skip: 0,
         });
       },
 
       filterByCategory: async (category) => {
         const normalizedCategory = category === "all" ? undefined : category;
+        const currentFilters = get().filters;
+        const { search, ...otherFilters } = currentFilters;
 
         set({
-          filters: { ...get().filters, category: normalizedCategory },
+          filters: {
+            ...otherFilters,
+            category: normalizedCategory,
+          },
           currentPage: 1,
         });
 
