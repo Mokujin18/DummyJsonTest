@@ -6,7 +6,8 @@ import {
   getStockStatus,
 } from "../../utils/getCardDetails";
 import { getRatingStars } from "../common/rating/rating";
-import { Button } from "../UI/Form/Button";
+import { twMerge } from "tailwind-merge";
+import { Button } from "../UI/Button";
 
 interface ProductCardProps {
   product: Product;
@@ -14,109 +15,81 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, className = "" }: ProductCardProps) => {
-  const stockStatus = getStockStatus(product);
-  const discountedPrice = getDiscountedPrice(product);
-  const hasDiscount = product.discountPercentage > 0;
+  const discountedPrice = getDiscountedPrice(
+    product.price,
+    product.discountPercentage
+  );
+  const stockStatus = getStockStatus(product.stock);
 
   return (
-    <Link
-      to={`/products/${product.id}`}
-      className={`
-        bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300
-        border border-gray-100 overflow-hidden group hover:scale-[1.02]
-        ${className}
-      `}
+    <div
+      className={twMerge(
+        "bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-full",
+        className
+      )}
     >
-      <div className="relative">
-        <div className="aspect-w-1 aspect-h-1 bg-gray-200">
-          <img
-            src={product.thumbnail}
-            alt={product.title}
-            className="w-full h-48 sm:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-            loading="lazy"
-          />
-        </div>
-
-        {hasDiscount && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-            -{product.discountPercentage.toFixed(0)}%
+      <Link to={`/products/${product.id}`} className="block relative pb-[60%]">
+        <img
+          src={product.thumbnail}
+          alt={product.title}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {product.discountPercentage > 0 && (
+          <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-medium">
+            -{Math.round(product.discountPercentage)}%
           </div>
         )}
+      </Link>
 
-        <div
-          className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${stockStatus.color}`}
+      <div className="p-4 flex flex-col flex-grow">
+        <Link
+          to={`/products/${product.id}`}
+          className="block text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-200"
         >
-          {stockStatus.text}
-        </div>
-      </div>
-
-      <div className="p-4 space-y-3">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-blue-600 bg-blue-100 px-2 py-1 rounded-full uppercase tracking-wide">
-            {product.category}
-          </span>
-          {product.brand && (
-            <span className="text-gray-500 font-medium">{product.brand}</span>
-          )}
-        </div>
-
-        <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 leading-tight">
           {product.title}
-        </h3>
+        </Link>
 
-        <p className="text-sm text-gray-600 line-clamp-2">
-          {product.description}
-        </p>
+        <div className="mt-2 text-sm text-gray-600">{product.brand}</div>
 
-        <div className="flex items-center">
-          {getRatingStars(product.rating)}
-        </div>
+        <div className="mt-2">{getRatingStars(product.rating)}</div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-gray-900">
-              {formatPrice(discountedPrice)}
-            </span>
-            {hasDiscount && (
-              <span className="text-sm text-gray-500 line-through">
+        <div className="mt-4 flex items-center justify-between">
+          <div>
+            {product.discountPercentage > 0 ? (
+              <>
+                <div className="text-2xl font-bold text-gray-900">
+                  {formatPrice(discountedPrice)}
+                </div>
+                <div className="text-sm text-gray-500 line-through">
+                  {formatPrice(product.price)}
+                </div>
+              </>
+            ) : (
+              <div className="text-2xl font-bold text-gray-900">
                 {formatPrice(product.price)}
-              </span>
+              </div>
             )}
+          </div>
+
+          <div
+            className={twMerge(
+              "px-3 py-1 rounded-full text-sm font-medium",
+              stockStatus.className
+            )}
+          >
+            {stockStatus.text}
           </div>
         </div>
-
-        {product.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {product.tags.slice(0, 3).map((tag, index) => (
-              <span
-                key={index}
-                className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full"
-              >
-                #{tag}
-              </span>
-            ))}
-            {product.tags.length > 3 && (
-              <span className="text-xs text-gray-400">
-                +{product.tags.length - 3} more
-              </span>
-            )}
-          </div>
-        )}
 
         <Button
+          variant="product"
+          size="full"
           disabled={product.stock === 0}
-          className={`
-            w-full mt-4 py-2 px-4 rounded-lg font-medium transition-all duration-200
-            ${
-              product.stock === 0
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700 active:scale-95"
-            }
-          `}
+          className="mt-auto "
         >
-          {product.stock === 0 ? "Out of stock" : "View"}
+          {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
         </Button>
       </div>
-    </Link>
+    </div>
   );
 };

@@ -3,11 +3,9 @@ import { useDebounce } from "../../hooks/useDebounce";
 import { useProductStore } from "../../stores/productStore";
 import { FaSearch } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-
-interface SearchBarProps {
-  placeholder?: string;
-  className?: string;
-}
+import { IconButton } from "../UI/IconButton";
+import type { SearchBarProps } from "./types";
+import { twMerge } from "tailwind-merge";
 
 export const SearchBar = ({
   placeholder = "Search products...",
@@ -15,34 +13,28 @@ export const SearchBar = ({
 }: SearchBarProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const { searchProducts, clearFilters, filters, isLoading } =
-    useProductStore();
+  const { searchProducts, clearSearch, filters, isLoading } = useProductStore();
 
   useEffect(() => {
-    if (debouncedSearchTerm !== filters.search) {
-      if (debouncedSearchTerm.trim()) {
-        searchProducts(debouncedSearchTerm);
-      } else if (filters.search) {
-        clearFilters();
-      }
-    }
-  }, [debouncedSearchTerm, searchProducts, clearFilters, filters.search]);
-
-  useEffect(() => {
-    if (filters.search !== searchTerm) {
-      setSearchTerm(filters.search || "");
-    }
+    setSearchTerm(filters.search || "");
   }, [filters.search]);
 
+  useEffect(() => {
+    if (debouncedSearchTerm.trim()) {
+      searchProducts(debouncedSearchTerm);
+    } else {
+      clearSearch();
+    }
+  }, [debouncedSearchTerm, searchProducts, clearSearch]);
+
   const handleClear = () => {
-    setSearchTerm("");
-    clearFilters();
+    clearSearch();
   };
 
   return (
     <div className={`relative ${className}`}>
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <div className="relative flex items-center">
+        <div className="absolute left-0 pl-3 flex items-center pointer-events-none">
           <FaSearch
             className={`h-5 w-5 transition-colors duration-200 ${
               isLoading ? "text-blue-500 animate-pulse" : "text-gray-400"
@@ -55,23 +47,28 @@ export const SearchBar = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder={placeholder}
-          className={`
+          className={twMerge(`
             w-full pl-10 pr-12 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
             hover:border-gray-400 transition-all duration-200
             placeholder:text-gray-500
             ${isLoading ? "bg-blue-50" : ""}
-          `}
+          `)}
         />
 
         {searchTerm && (
-          <button
-            onClick={handleClear}
-            className="absolute inset-y-0 right-0 px-3 flex items-center hover:bg-gray-100 rounded-r-lg transition-colors duration-200"
-            title="Clear search"
-          >
-            <FaXmark className="w-5 h-5 text-gray-400 hover:text-gray-600" />
-          </button>
+          <div className="absolute right-1 h-full flex items-center">
+            <IconButton
+              onClick={handleClear}
+              variant="transparent"
+              icon={
+                <FaXmark className="w-6 h-6 top-1/2 absolute -translate-y-1/2" />
+              }
+              className="h-full px-3"
+              rounded="none"
+              title="Clear search"
+            />
+          </div>
         )}
       </div>
 

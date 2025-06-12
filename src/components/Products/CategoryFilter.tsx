@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useProductStore } from "../../stores/productStore";
 import type { CategoryFilterProps } from "./types";
 import { FaXmark } from "react-icons/fa6";
+import { Button } from "../UI/Button";
 
 export const CategoryFilter = ({ className = "" }: CategoryFilterProps) => {
   const {
@@ -47,38 +48,28 @@ export const CategoryFilter = ({ className = "" }: CategoryFilterProps) => {
   return (
     <div className={className}>
       <div className="flex flex-wrap gap-2">
-        <button
+        <Button
+          variant="filter"
+          size="sm"
           onClick={() => handleCategoryChange("all")}
-          className={`
-            px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
-            border-2 hover:scale-105 active:scale-95
-            ${
-              currentCategory === "all"
-                ? "bg-blue-500 text-white border-blue-500 shadow-lg"
-                : "bg-white text-gray-700 border-gray-300 hover:border-blue-300 hover:text-blue-600"
-            }
-          `}
+          active={currentCategory === "all"}
+          className="rounded-full"
         >
           All categories
-        </button>
+        </Button>
 
         {categories.map((category) => (
-          <button
+          <Button
             key={category.slug}
+            variant="filter"
+            size="sm"
             onClick={() => handleCategoryChange(category.slug)}
-            className={`
-              px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
-              border-2 hover:scale-105 active:scale-95 capitalize
-              ${
-                currentCategory === category.slug
-                  ? "bg-blue-500 text-white border-blue-500 shadow-lg"
-                  : "bg-white text-gray-700 border-gray-300 hover:border-blue-300 hover:text-blue-600"
-              }
-            `}
+            active={currentCategory === category.slug}
+            className="rounded-full capitalize"
             title={`Filter by category: ${category.name}`}
           >
             {category.name}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -90,13 +81,14 @@ export const CategoryFilter = ({ className = "" }: CategoryFilterProps) => {
               {categories.find((cat) => cat.slug === currentCategory)?.name ||
                 currentCategory}
             </span>
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => handleCategoryChange("all")}
-              className="ml-1 hover:text-blue-900 transition-colors duration-200"
+              className="ml-1 p-0.5 bg-transparent hover:bg-blue-50"
               title="Delete filter"
-            >
-              <FaXmark className="w-4 h-4" />
-            </button>
+              icon={<FaXmark className="w-4 h-4" />}
+            />
           </div>
         </div>
       )}

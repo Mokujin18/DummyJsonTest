@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { LoginCredentials, AuthResponse } from "../types";
-import { API_URL, ENDPOINTS } from "../constants/url";
+import { API_URL, ENDPOINTS } from "../constants/endpoints";
 import { ERRORS } from "../constants/errors";
 
 export const apiClient = axios.create({

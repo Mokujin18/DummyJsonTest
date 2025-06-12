@@ -55,7 +55,6 @@ export const useAuthStore = create<AuthState>()(
             throw error;
           }
         },
-
         logout: () => {
           set({
             user: null,

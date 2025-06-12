@@ -6,7 +6,7 @@ import type {
   ProductFilters,
   PaginationParams,
 } from "../types";
-import { ENDPOINTS } from "../constants/url";
+import { ENDPOINTS } from "../constants/endpoints";
 import { ERRORS } from "../constants/errors";
 
 const buildQueryParams = (
@@ -44,11 +44,12 @@ export const fetchProducts = async (
       ...otherParams,
     };
 
-    if (search && search.trim()) {
-      endpoint = ENDPOINTS.PRODUCTS.SEARCH;
-      queryParams.q = search.trim();
-    } else if (category && category !== "all") {
+    if (category && category !== "all") {
       endpoint = ENDPOINTS.PRODUCTS.GET_BY_CATEGORY + category;
+    }
+
+    if (search && search.trim()) {
+      queryParams.q = search.trim();
     }
 
     if (sortBy) {
@@ -60,6 +61,28 @@ export const fetchProducts = async (
     const url = queryString ? `${endpoint}?${queryString}` : endpoint;
 
     const response = await apiClient.get<ProductsResponse>(url);
+
+    if (search && search.trim() && response.data.products.length > 0) {
+      const searchLower = search.trim().toLowerCase();
+      const filteredProducts = response.data.products.filter((product) => {
+        const title = product.title?.toLowerCase() || "";
+        const description = product.description?.toLowerCase() || "";
+        const brand = product.brand?.toLowerCase() || "";
+
+        return (
+          title.includes(searchLower) ||
+          description.includes(searchLower) ||
+          brand.includes(searchLower)
+        );
+      });
+
+      return {
+        ...response.data,
+        products: filteredProducts,
+        total: filteredProducts.length,
+      };
+    }
+
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
